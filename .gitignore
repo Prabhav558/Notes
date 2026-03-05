@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/app/google-services.json
+*.apk
+*.aab
+*.jks
+*.keystore
+use_this_image_as_the_icon_of_the_app._also_..._cd86617f.json
