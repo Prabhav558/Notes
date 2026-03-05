@@ -66,19 +66,19 @@ class TasksWidget : GlanceAppWidget() {
             val tasksSnapshot = db.collection("partnerships")
                 .document(partnershipId)
                 .collection("tasks")
-                .whereEqualTo("isCompleted", false)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(10)
                 .get()
                 .await()
 
             tasksSnapshot.documents.mapNotNull { doc ->
                 val data = doc.data ?: return@mapNotNull null
+                val isCompleted = data["isCompleted"] as? Boolean ?: false
+                if (isCompleted) return@mapNotNull null
                 WidgetTaskItem(
                     text = data["text"] as? String ?: "",
                     createdBy = data["createdBy"] as? String ?: ""
                 )
-            }
+            }.take(10)
         } catch (e: Exception) {
             emptyList()
         }

@@ -1,17 +1,19 @@
 package com.example.notes.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notes.data.NoteDocument
 import com.example.notes.data.NoteItem
 import com.example.notes.data.NotesRepository
 import com.example.notes.data.Partnership
+import com.example.notes.widget.updateAllWidgets
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class NotesViewModel : ViewModel() {
+class NotesViewModel(application: Application) : AndroidViewModel(application) {
     private val notesRepo = NotesRepository()
 
     private val _noteDocuments = MutableStateFlow<List<NoteDocument>>(emptyList())
@@ -31,11 +33,13 @@ class NotesViewModel : ViewModel() {
         viewModelScope.launch {
             notesRepo.getNoteDocumentsFlow(partnershipId).collect { docs ->
                 _noteDocuments.value = docs
+                updateAllWidgets(getApplication())
             }
         }
         viewModelScope.launch {
             notesRepo.getTasksFlow(partnershipId).collect { tasksList ->
                 _tasks.value = tasksList
+                updateAllWidgets(getApplication())
             }
         }
     }
@@ -44,6 +48,7 @@ class NotesViewModel : ViewModel() {
         if (title.isBlank() || partnershipId.isEmpty()) return
         viewModelScope.launch {
             notesRepo.createNoteDocument(partnershipId, title, currentUserUid)
+            updateAllWidgets(getApplication())
         }
     }
 
@@ -51,6 +56,7 @@ class NotesViewModel : ViewModel() {
         if (partnershipId.isEmpty()) return
         viewModelScope.launch {
             notesRepo.deleteNoteDocument(partnershipId, docId)
+            updateAllWidgets(getApplication())
         }
     }
 
@@ -58,6 +64,7 @@ class NotesViewModel : ViewModel() {
         if (text.isBlank() || partnershipId.isEmpty()) return
         viewModelScope.launch {
             notesRepo.addTask(partnershipId, text, currentUserUid)
+            updateAllWidgets(getApplication())
         }
     }
 
@@ -65,6 +72,7 @@ class NotesViewModel : ViewModel() {
         if (partnershipId.isEmpty()) return
         viewModelScope.launch {
             notesRepo.toggleTask(partnershipId, taskId, isCompleted)
+            updateAllWidgets(getApplication())
         }
     }
 
@@ -72,6 +80,7 @@ class NotesViewModel : ViewModel() {
         if (partnershipId.isEmpty()) return
         viewModelScope.launch {
             notesRepo.deleteTask(partnershipId, taskId)
+            updateAllWidgets(getApplication())
         }
     }
 
